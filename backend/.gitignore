@@ -1,0 +1,5 @@
+# Dependencies
+node_modules/
+
+# Environment variables (never upload this — contains secrets)
+.env
