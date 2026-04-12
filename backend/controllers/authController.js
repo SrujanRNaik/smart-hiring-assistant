@@ -80,4 +80,12 @@ const login = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-module.exports = { register, login };
+
+// GET /api/auth/me — returns the currently logged-in user
+const getMe = async (req, res) => {
+    res.json({ user: req.user });
+    // req.user was attached by the protect middleware
+    // This route just returns it — no DB call needed
+};
+
+module.exports = { register, login, getMe };
