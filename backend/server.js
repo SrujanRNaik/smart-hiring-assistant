@@ -14,10 +14,21 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use((req, res) => {
+    res.status(404).json({ message: `Route ${req.originalUrl} not found` });
+});
+app.use((err, req, res, next) => {
+    let message = err.message || 'Server error';
+    if (err.name === 'CastError') {
+        message = 'Invalid ID format';
+    }
+    res.status(err.status || 500).json({ message });
+});
 // Test route
 app.get('/', (req, res) => {
     res.json({ message: 'Hello World — server is running!' });
 });
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
