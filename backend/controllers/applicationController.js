@@ -1,5 +1,6 @@
 const Application = require('../models/Application');
 const Job = require('../models/Job');
+const { scoreResume } = require('../services/aiScorer');
 // ─── SUBMIT APPLICATION ──────────────────────────────
 const submitApplication = async (req, res) => {
     try {
@@ -24,12 +25,26 @@ const submitApplication = async (req, res) => {
         if (existing) {
             return res.status(400).json({ message: 'You have already applied to this job' });
         }
+
+        // ── NEW: Run AI scoring before saving ──────────────
+        console.log('Running AI scoring...');
+        const aiResult = await scoreResume(
+            resumeText,
+            job.title,
+            job.description,
+            job.requirements
+        );
+        console.log('AI score:', aiResult.fitScore, '| Verdict:', aiResult.verdict);
         // 4. Create the application
         const application = await Application.create({
             job: jobId,
             candidate: req.user.id,
             resumeText,
             coverLetter,
+            aiScore: aiResult.fitScore,
+            aiVerdict: aiResult.verdict,
+            aiStrengths: aiResult.strengths,
+            aiWeaknesses: aiResult.weaknesses,
         });
         res.status(201).json({ message: 'Application submitted successfully', application });
     } catch (error) {
