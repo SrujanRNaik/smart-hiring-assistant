@@ -49,4 +49,54 @@ Use exactly this format:
         };
     }
 };
-module.exports = { scoreResume };
+
+const generateInterviewQuestions = async (
+    jobTitle,
+    jobRequirements,
+    candidateWeaknesses,
+    candidateName
+) => {
+    const prompt = `
+You are an expert technical interviewer.
+Generate 5 targeted interview questions for a candidate applying for the role below.
+Focus on probing their specific weak areas while also testing job requirements.
+JOB TITLE: ${jobTitle}
+JOB REQUIREMENTS: ${jobRequirements.join(', ')}
+CANDIDATE NAME: ${candidateName}
+CANDIDATE WEAK AREAS: ${candidateWeaknesses.join(', ')}
+Rules:
+- Each question must directly relate to a weak area or job requirement
+- Questions should be specific, not generic
+- Mix technical and situational questions
+- Respond with ONLY a valid JSON array. No explanation. No markdown.
+Format exactly like this:
+[
+{
+"question": "How would you manage state across 10+ components without prop drilling?",
+"targetedAt": "State management weakness",
+"type": "technical"
+},
+{
+"question": "Describe a time you had to learn a new backend technology quickly.",
+"targetedAt": "Limited backend experience",
+"type": "situational"
+}
+]
+`;
+    try {
+        const result = await model.generateContent(prompt);
+        const reply = result.response.text();
+        const cleaned = reply.replace(/```json|```/g, '').trim();
+        const questions = JSON.parse(cleaned);
+        // Make sure we got an array back
+        if (!Array.isArray(questions)) {
+            throw new Error('Expected an array of questions');
+        }
+        return questions;
+    } catch (error) {
+        console.error('Interview question generation failed:', error.message);
+        return [];
+        // Return empty array on failure — never crash the route
+    }
+};
+module.exports = { scoreResume, generateInterviewQuestions };
