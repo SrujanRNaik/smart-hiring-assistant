@@ -1,4 +1,21 @@
 const model = require('../config/ai');
+
+// Retry wrapper for transient Gemini errors (503, 429, overloaded)
+const withRetry = async (fn, retries = 3, delayMs = 2000) => {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            return await fn();
+        } catch (err) {
+            const isTransient = err.message?.includes('503') || err.message?.includes('429') || err.message?.includes('overloaded');
+            if (isTransient && attempt < retries) {
+                console.warn(`Gemini transient error (attempt ${attempt}/${retries}), retrying in ${delayMs}ms...`);
+                await new Promise(res => setTimeout(res, delayMs));
+            } else {
+                throw err;
+            }
+        }
+    }
+};
 const scoreResume = async (resumeText, jobTitle, jobDescription, jobRequirements) => {
     const prompt = `
 You are an expert technical recruiter with 10 years of experience.
@@ -23,7 +40,7 @@ Use exactly this format:
 }
 `;
     try {
-        const result = await model.generateContent(prompt);
+        const result = await withRetry(() => model.generateContent(prompt));
         const reply = result.response.text();
         // Strip markdown code blocks Gemini sometimes adds
         const cleaned = reply.replace(/```json|```/g, '').trim();
@@ -84,7 +101,7 @@ Format exactly like this:
 ]
 `;
     try {
-        const result = await model.generateContent(prompt);
+        const result = await withRetry(() => model.generateContent(prompt));
         const reply = result.response.text();
         const cleaned = reply.replace(/```json|```/g, '').trim();
         const questions = JSON.parse(cleaned);
