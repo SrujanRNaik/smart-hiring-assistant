@@ -1,4 +1,87 @@
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 const LoginPage = () => {
-    return <div className="p-8">Login Page — coming Day 16</div>;
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const { login } = useAuth();
+    const navigate = useNavigate();
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setError('');
+    };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const res = await api.post('/auth/login', formData);
+            login(res.data.user, res.data.token);
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Login failed. Try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+    return (
+        <div style={{
+            minHeight: '100vh',
+            background: 'radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.08) 0%, transparent 50%), var(--bg-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
+        }}>
+            <div className="fade-up" style={{ width: '100%', maxWidth: '420px' }}>
+                {/* Logo */}
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <div style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '8px',
+                        background: 'var(--accent)', borderRadius: '10px',
+                        padding: '6px 14px', marginBottom: '1.25rem',
+                    }}>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'white', fontFamily: 'Syne, sans-serif' }}>HireAI</span>
+                    </div>
+                    <h1 className="font-display" style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
+                        Welcome back
+                    </h1>
+                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Sign in to your account</p>
+                </div>
+                {/* Card */}
+                <div className="glass" style={{ borderRadius: '16px', padding: '2rem' }}>
+                    {/* Error */}
+                    {error && (
+                        <div style={{
+                            background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
+                            color: '#fca5a5', borderRadius: '8px', padding: '10px 14px',
+                            fontSize: '13px', marginBottom: '1.25rem',
+                        }}>{error}</div>
+                    )}
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>Email</label>
+                            <input className="input-dark" type="email" name="email"
+                                value={formData.email} onChange={handleChange}
+                                required placeholder="you@company.com" />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>Password</label>
+                            <input className="input-dark" type="password" name="password"
+                                value={formData.password} onChange={handleChange}
+                                required placeholder="••••••••" />
+                        </div>
+                        <button className="btn-accent" type="submit" disabled={loading} style={{ marginTop: '4px' }}>
+                            {loading ? 'Signing in...' : 'Sign In'}
+                        </button>
+                    </form>
+                    <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-secondary)', marginTop: '1.5rem' }}>
+                        Don't have an account?{' '}
+                        <Link to="/register" style={{ color: 'var(--accent)', fontWeight: 500, textDecoration: 'none' }}>
+                            Create one
+                        </Link>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
 };
 export default LoginPage;
