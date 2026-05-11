@@ -189,3 +189,9 @@ body {
     color: var(--text-muted);
     margin-bottom: 1rem;
 }
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
