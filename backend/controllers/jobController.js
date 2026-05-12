@@ -3,6 +3,9 @@ const Job = require('../models/Job');
 const createJob = async (req, res) => {
     try {
         const { title, description, requirements, location, salary } = req.body;
+        if (!title || !description) {
+            return res.status(400).json({ message: 'Title and description are required' });
+        }
         // Only recruiters can post jobs
         if (req.user.role !== 'recruiter') {
             return res.status(403).json({ message: 'Only recruiters can post jobs' });
@@ -24,6 +27,7 @@ const createJob = async (req, res) => {
 // ─── GET ALL JOBS ────────────────────────────────────
 const getAllJobs = async (req, res) => {
     try {
+        const filter = { status: 'open' };
         const jobs = await Job.find({ status: 'open' })
             .populate('recruiter', 'name email')
             // populate replaces the recruiter ID with the actual name + email
@@ -31,6 +35,16 @@ const getAllJobs = async (req, res) => {
             // you get: recruiter: { name: "Test Recruiter", email: "..." }
             .sort({ createdAt: -1 });
         // -1 = newest first
+        res.json({ count: jobs.length, jobs });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getMyJobs = async (req, res) => {
+    try {
+        const jobs = await Job.find({ recruiter: req.user.id })
+            .sort({ createdAt: -1 });
         res.json({ count: jobs.length, jobs });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -67,4 +81,4 @@ const deleteJob = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-module.exports = { createJob, getAllJobs, getJobById, deleteJob };
+module.exports = { createJob, getAllJobs, getJobById, deleteJob, getMyJobs };

@@ -23,7 +23,6 @@ const getInterviewQuestions = async (req, res) => {
             : ['General technical skills', 'Communication skills'];
         // Fallback if AI scoring didn't run — still generate generic questions
         // 3. Call Gemini to generate questions
-        console.log(`Generating questions for ${application.candidate.name}...`);
         const questions = await generateInterviewQuestions(
             application.job.title,
             application.job.requirements,

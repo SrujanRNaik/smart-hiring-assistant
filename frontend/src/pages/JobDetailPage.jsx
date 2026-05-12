@@ -1,7 +1,7 @@
 import { useToast } from '../components/Toast';
 import Spinner from '../components/Spinner';
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 // Verdict config — reused across cards
@@ -15,6 +15,9 @@ const JobDetailPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const { showToast } = useToast();
+    if (!user || user.role !== 'recruiter') {
+        return <Navigate to="/jobs" replace />;
+    }
     const [job, setJob] = useState(null);
     const [candidates, setCandidates] = useState([]);
     const [loading, setLoading] = useState(true);

@@ -1,6 +1,6 @@
 import { useToast } from '../components/Toast';
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 const RegisterPage = () => {
@@ -10,6 +10,9 @@ const RegisterPage = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const { showToast } = useToast();
+    const { user, authLoading } = useAuth();
+    if (authLoading) return null;
+    if (user) return <Navigate to="/dashboard" replace />;
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setError('');
@@ -64,7 +67,7 @@ const RegisterPage = () => {
                             fontSize: '13px', marginBottom: '1.25rem',
                         }}>{error}</div>
                     )}
-                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <form noValidate onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {/* Role selector */}
                         <div>
                             <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '8px' }}>I am a...</label>

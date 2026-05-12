@@ -45,7 +45,7 @@ const RecruiterDashboard = () => {
     useEffect(() => { fetchJobs(); }, []);
     const fetchJobs = async () => {
         try {
-            const res = await api.get('/jobs');
+            const res = await api.get('/jobs/my');
             setJobs(res.data.jobs);
         } catch (err) {
             console.error(err);
@@ -136,7 +136,7 @@ const RecruiterDashboard = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             <div>
                                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>Job Title *</label>
-                                <input className="input-dark" name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Frontend Developer" />
+                                <input className="input-dark" name="title" value={formData.title} onChange={handleChange} placeholder="e.g. Frontend Developer" />
                             </div>
                             <div>
                                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>Location</label>
@@ -145,7 +145,7 @@ const RecruiterDashboard = () => {
                         </div>
                         <div>
                             <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>Description *</label>
-                            <textarea className="input-dark" name="description" value={formData.description} onChange={handleChange} required rows={3} placeholder="Describe the role and responsibilities..." style={{ resize: 'none' }} />
+                            <textarea className="input-dark" name="description" value={formData.description} onChange={handleChange} rows={3} placeholder="Describe the role and responsibilities..." style={{ resize: 'none' }} />
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             <div>

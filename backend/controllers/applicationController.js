@@ -10,6 +10,9 @@ const submitApplication = async (req, res) => {
             return res.status(403).json({ message: 'Only candidates can apply to jobs' });
         }
         const { jobId, resumeText, coverLetter } = req.body;
+        if (!jobId || !resumeText || resumeText.trim().length < 50) {
+            return res.status(400).json({ message: 'Missing fields or resume too short' });
+        }
         // 2. Check the job exists and is still open
         const job = await Job.findById(jobId);
         if (!job) {
@@ -28,14 +31,12 @@ const submitApplication = async (req, res) => {
         }
 
         // ── NEW: Run AI scoring before saving ──────────────
-        console.log('Running AI scoring...');
         const aiResult = await scoreResume(
             resumeText,
             job.title,
             job.description,
             job.requirements
         );
-        console.log('AI score:', aiResult.fitScore, '| Verdict:', aiResult.verdict);
         // 4. Create the application
         const application = await Application.create({
             job: jobId,
@@ -60,6 +61,12 @@ const getApplicationsForJob = async (req, res) => {
             return res.status(403).json({ message: 'Only recruiters can view applications' });
         }
         const { jobId } = req.query;
+        const job = await Job.findById(jobId);
+        if (!job) return res.status(404).json({ message: 'Job not found' });
+        if (job.recruiter.toString() !== req.user.id.toString()) {
+            return res.status(403).json({ message: 'Not authorized to view these applications' });
+        }
+
         // jobId comes from the URL query: /api/applications?jobId=xxx
         const applications = await Application.find({ job: jobId })
             .populate('candidate', 'name email')

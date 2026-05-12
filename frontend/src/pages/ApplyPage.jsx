@@ -13,6 +13,7 @@ const ApplyPage = () => {
     const { showToast } = useToast();
     const fileInputRef = useRef();
     const [job, setJob] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [stage, setStage] = useState('form');
     // 'form' | 'processing' | 'success'
     const [file, setFile] = useState(null);
@@ -24,8 +25,10 @@ const ApplyPage = () => {
     useEffect(() => {
         api.get(`/jobs/${jobId}`)
             .then(res => setJob(res.data.job))
-            .catch(() => navigate('/jobs'));
+            .catch(() => navigate('/jobs'))
+            .finally(() => setLoading(false)); // ➕ Add this
     }, [jobId]);
+
     // Drag and drop handlers
     const handleDrop = (e) => {
         e.preventDefault();
@@ -86,6 +89,7 @@ const ApplyPage = () => {
         background: 'radial-gradient(ellipse at 30% 20%, rgba(99,102,241,0.1) 0%, transparent 55%), var(--bg-primary)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem',
     };
+    if (!job && loading) return null;
     // ── Stage: processing ────────────────────────────────
     if (stage === 'processing') {
         const steps = ['Uploading resume', 'Parsing PDF content', 'Running AI analysis', 'Submitting application'];

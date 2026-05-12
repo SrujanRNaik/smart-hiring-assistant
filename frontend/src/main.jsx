@@ -5,12 +5,15 @@ import { AuthProvider } from './context/AuthContext';
 import App from './App';
 import './index.css';
 import { ToastProvider } from './components/Toast';
+import ErrorBoundary from './components/ErrorBoundary';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-    <AuthProvider>
-      <ToastProvider>
-        <App />
-      </ToastProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <ToastProvider>
+          <App />
+        </ToastProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   </BrowserRouter>
 );
