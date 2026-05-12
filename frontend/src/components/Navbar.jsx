@@ -75,7 +75,7 @@ const Navbar = () => {
                     </>
                 ) : (
                     <>
-                        <Link to="/login" style={{ fontSize: '13px', color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500 }}>Login</Link>
+                        <Link to="/login" style={navLink('/login')}>Login</Link>
                         <Link to="/register" style={{
                             fontSize: '13px', fontWeight: 500, color: 'white', textDecoration: 'none',
                             background: 'var(--accent)', padding: '6px 14px', borderRadius: '8px',

@@ -1,7 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import ScrollToTop from './components/ScrollToTop';
+import NotFoundPage from './pages/NotFoundPage';
 import Navbar from './components/Navbar';
-// ↑ add this import
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -13,6 +14,7 @@ const App = () => {
   const { user } = useAuth();
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+      <ScrollToTop />
       <Navbar />
       {/* ↑ Navbar shows on every page */}
       <Routes>
@@ -29,7 +31,7 @@ const App = () => {
         <Route path="/" element={
           user ? <Navigate to="/dashboard" /> : <Navigate to="/jobs" />
         } />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );

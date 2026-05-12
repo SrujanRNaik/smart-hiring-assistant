@@ -1,3 +1,5 @@
+import { useToast } from '../components/Toast';
+import Spinner from '../components/Spinner';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +14,7 @@ const JobDetailPage = () => {
     const { id } = useParams();
     const { user } = useAuth();
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const [job, setJob] = useState(null);
     const [candidates, setCandidates] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -29,6 +32,7 @@ const JobDetailPage = () => {
                 setCandidates(candRes.data.topCandidates || []);
             } catch (err) {
                 console.error(err);
+                showToast('Failed to load job details', 'error');
             } finally { setLoading(false); }
         };
         fetchData();
@@ -46,18 +50,12 @@ const JobDetailPage = () => {
             setQuestions(prev => ({ ...prev, [appId]: res.data }));
         } catch (err) {
             console.error(err);
+            showToast('Failed to generate interview questions', 'error');
         } finally {
             setLoadingQ(prev => ({ ...prev, [appId]: false }));
         }
     };
-    if (loading) return (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-            <div style={{ textAlign: 'center' }}>
-                <div style={{ width: '40px', height: '40px', border: '2px solid var(--border)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px' }} />
-                <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Loading applicants...</p>
-            </div>
-        </div>
-    );
+    if (loading) return <Spinner text="Loading applicants..." />;
     return (
         <div className="fade-up" style={{ maxWidth: '900px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
             {/* Back button */}
@@ -242,6 +240,7 @@ const JobDetailPage = () => {
                                                 <button onClick={() => {
                                                     const text = qData.questions.map((q, i) => `${i + 1}. ${q.question}`).join('\n');
                                                     navigator.clipboard.writeText(text);
+                                                    showToast('Questions copied to clipboard!', 'success');
                                                 }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '11px', cursor: 'pointer', fontFamily: 'DM Sans,sans-serif' }}>
                                                     Copy all
                                                 </button>

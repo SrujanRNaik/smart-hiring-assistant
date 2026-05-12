@@ -1,3 +1,5 @@
+import { useToast } from '../components/Toast';
+import Spinner from '../components/Spinner';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -31,6 +33,7 @@ const DashboardPage = () => {
 
 const RecruiterDashboard = () => {
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
@@ -64,8 +67,9 @@ const RecruiterDashboard = () => {
             setFormData({ title: '', description: '', requirements: '', location: '', salary: '' });
             setShowForm(false);
             fetchJobs();
+            showToast('Job posted successfully!', 'success');
         } catch (err) {
-            setFormError(err.response?.data?.message || 'Failed to post job');
+            showToast(err.response?.data?.message || 'Failed to post job', 'error');
         } finally { setSubmitting(false); }
     };
     const handleDelete = async (jobId) => {
@@ -73,15 +77,12 @@ const RecruiterDashboard = () => {
         try {
             await api.delete(`/jobs/${jobId}`);
             setJobs(jobs.filter(j => j._id !== jobId));
+            showToast('Job deleted', 'success');
         } catch (err) {
-            alert(err.response?.data?.message || 'Failed to delete');
+            showToast('Failed to delete job', 'error');
         }
     };
-    if (loading) return (
-        <div style={{ color: 'var(--text-muted)', fontSize: '14px', padding: '3rem 0', textAlign: 'center' }}>
-            Loading jobs...
-        </div>
-    );
+    if (loading) return <Spinner text="Loading jobs..." />;
     return (
         <div>
             {/* Stats row */}

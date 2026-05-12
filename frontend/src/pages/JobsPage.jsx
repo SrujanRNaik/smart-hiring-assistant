@@ -1,3 +1,4 @@
+import { useToast } from '../components/Toast';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -5,13 +6,14 @@ import api from '../api/axios';
 const JobsPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     useEffect(() => {
         api.get('/jobs')
             .then(res => setJobs(res.data.jobs || []))
-            .catch(console.error)
+            .catch(() => showToast('Failed to load jobs', 'error'))
             .finally(() => setLoading(false));
     }, []);
     // Filter jobs by search query — title or requirements

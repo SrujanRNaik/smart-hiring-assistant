@@ -1,3 +1,4 @@
+import { useToast } from '../components/Toast';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
@@ -9,6 +10,7 @@ const VERDICT_CONFIG = {
 const ApplyPage = () => {
     const { id: jobId } = useParams();
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const fileInputRef = useRef();
     const [job, setJob] = useState(null);
     const [stage, setStage] = useState('form');
@@ -33,6 +35,7 @@ const ApplyPage = () => {
             setFile(dropped); setError('');
         } else {
             setError('Please upload a PDF file only.');
+            showToast('Please select a PDF file.', 'error');
         }
     };
     const handleFileChange = (e) => {
@@ -41,6 +44,7 @@ const ApplyPage = () => {
             setFile(selected); setError('');
         } else {
             setError('Please select a PDF file.');
+            showToast('Please select a PDF file.', 'error');
         }
     };
     // Main submit handler
@@ -70,9 +74,11 @@ const ApplyPage = () => {
             });
             setResult(appRes.data.application);
             setStage('success');
+            showToast('Application submitted successfully!', 'success');
         } catch (err) {
             setStage('form');
             setError(err.response?.data?.message || 'Submission failed. Try again.');
+            showToast(err.response?.data?.message || 'Submission failed. Try again.', 'error');
         }
     };
     const pageWrap = {

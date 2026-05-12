@@ -1,3 +1,4 @@
+import { useToast } from '../components/Toast';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -8,6 +9,7 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setError('');
@@ -19,8 +21,10 @@ const LoginPage = () => {
             const res = await api.post('/auth/login', formData);
             login(res.data.user, res.data.token);
             navigate('/dashboard');
+            showToast('Logged in successfully!', 'success');
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed. Try again.');
+            showToast(err.response?.data?.message || 'Login failed. Try again.', 'error');
         } finally {
             setLoading(false);
         }
