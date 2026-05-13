@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import useIsMobile from '../hooks/useIsMobile';
 // ─── Page shell ──────────────────────────────────────────
 const DashboardPage = () => {
     const { user } = useAuth();
@@ -32,6 +33,7 @@ const DashboardPage = () => {
 };
 
 const RecruiterDashboard = () => {
+    const isMobile = useIsMobile();
     const navigate = useNavigate();
     const { showToast } = useToast();
     const [jobs, setJobs] = useState([]);
@@ -86,7 +88,7 @@ const RecruiterDashboard = () => {
     return (
         <div>
             {/* Stats row */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: '1rem', marginBottom: '2rem' }}>
                 {[
                     { label: 'Active Jobs', value: jobs.length, color: '#6366f1' },
                     { label: 'Open Positions', value: jobs.filter(j => j.status === 'open').length, color: '#10b981' },
@@ -133,7 +135,7 @@ const RecruiterDashboard = () => {
                         </div>
                     )}
                     <form onSubmit={handlePostJob} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem' }}>
                             <div>
                                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>Job Title *</label>
                                 <input className="input-dark" name="title" value={formData.title} onChange={handleChange} placeholder="e.g. Frontend Developer" />

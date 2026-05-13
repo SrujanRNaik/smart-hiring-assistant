@@ -207,3 +207,33 @@ body {
         transform: translateX(0);
     }
 }
+
+
+/* ── Mobile breakpoint ─────────────────────────────── */
+@media (max-width: 640px) {
+
+    /* Prevent horizontal overflow on any element */
+    * {
+        max-width: 100%;
+    }
+
+    /* Stat cards — always 1 column on mobile */
+    .stat-card-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Glass cards — less padding on mobile */
+    .glass {
+        border-radius: 12px !important;
+    }
+
+    /* Font display — smaller on mobile */
+    .font-display {
+        word-break: break-word;
+    }
+
+    /* Section label — smaller letter spacing */
+    .section-label {
+        letter-spacing: .04em;
+    }
+}

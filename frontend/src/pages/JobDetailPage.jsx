@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import useIsMobile from '../hooks/useIsMobile';
 // Verdict config — reused across cards
 const VERDICT = {
     shortlist: { bg: 'rgba(16,185,129,0.12)', color: '#34d399', border: 'rgba(16,185,129,0.25)', label: 'Shortlisted', score: [80, 100] },
@@ -11,6 +12,7 @@ const VERDICT = {
     reject: { bg: 'rgba(239,68,68,0.1)', color: '#f87171', border: 'rgba(239,68,68,0.2)', label: 'Not Selected', score: [0, 49] },
 };
 const JobDetailPage = () => {
+    const isMobile = useIsMobile();
     const { id } = useParams();
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -82,7 +84,7 @@ const JobDetailPage = () => {
                             {job?.location} · {job?.salary || 'Salary not disclosed'}
                         </p>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
+                    <div style={{ textAlign: 'left' }}>
                         <div style={{ fontSize: '32px', fontWeight: 700, color: 'var(--accent)', fontFamily: 'Syne,sans-serif', lineHeight: 1 }}>
                             {candidates.length}
                         </div>
@@ -99,10 +101,11 @@ const JobDetailPage = () => {
                 )}
             </div>
             {/* Candidates header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', marginBottom: '1.25rem', gap: isMobile ? '1rem' : '0' }}>
+
                 <div>
                     <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>Ranked Applicants</h2>
-                    <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Sorted by AI fit score · max-heap algorithm</p>
+
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                     {['All', 'Shortlisted', 'Maybe', 'Rejected'].map(f => (
@@ -137,7 +140,7 @@ const JobDetailPage = () => {
                             borderColor: isOpen ? 'rgba(99,102,241,0.3)' : 'rgba(255,255,255,0.08)',
                         }}>
                             {/* Card header */}
-                            <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                            <div style={{ padding: '1.5rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: isMobile ? '10px 12px' : '1.25rem' }}>
                                 {/* Rank badge */}
                                 <div style={{
                                     width: '40px', height: '40px', borderRadius: '10px', flexShrink: 0,
@@ -164,11 +167,11 @@ const JobDetailPage = () => {
                                     <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'Syne,sans-serif', marginBottom: '2px' }}>
                                         {app.candidate?.name}
                                     </div>
-                                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{app.candidate?.email}</div>
+                                    {!isMobile && <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{app.candidate?.email}</div>}
                                 </div>
                                 {/* Score */}
                                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                    <div style={{ fontSize: '28px', fontWeight: 700, color: vc.color, fontFamily: 'Syne,sans-serif', lineHeight: 1, marginBottom: '6px' }}>
+                                    <div style={{ fontSize: isMobile ? '22px' : '28px', fontWeight: 700, color: vc.color, fontFamily: 'Syne,sans-serif', lineHeight: 1, marginBottom: '6px' }}>
                                         {app.aiScore ?? '—'}
                                         {app.aiScore && <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 400 }}>/100</span>}
                                     </div>
@@ -195,7 +198,7 @@ const JobDetailPage = () => {
                             {isOpen && (
                                 <div style={{ padding: '1.5rem', borderTop: '1px solid var(--border)', animation: 'fadeUp .25s ease' }}>
                                     {/* Strengths + Weaknesses */}
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
                                         <div style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: '12px', padding: '1rem' }}>
                                             <p style={{ fontSize: '11px', fontWeight: 600, color: '#34d399', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: '10px' }}>✓ Strengths</p>
                                             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px' }}>

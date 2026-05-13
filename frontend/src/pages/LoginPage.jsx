@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import useIsMobile from '../hooks/useIsMobile';
 const LoginPage = () => {
+    const isMobile = useIsMobile();
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -36,7 +38,7 @@ const LoginPage = () => {
         <div style={{
             minHeight: '100vh',
             background: 'radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.08) 0%, transparent 50%), var(--bg-primary)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '1.5rem 1rem' : '1rem',
         }}>
             <div className="fade-up" style={{ width: '100%', maxWidth: '420px' }}>
                 {/* Logo */}
@@ -54,7 +56,7 @@ const LoginPage = () => {
                     <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Sign in to your account</p>
                 </div>
                 {/* Card */}
-                <div className="glass" style={{ borderRadius: '16px', padding: '2rem' }}>
+                <div className="glass" style={{ borderRadius: '16px', padding: isMobile ? '1.5rem' : '2rem' }}>
                     {/* Error */}
                     {error && (
                         <div style={{

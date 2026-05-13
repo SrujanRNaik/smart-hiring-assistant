@@ -2,12 +2,14 @@ import { useToast } from '../components/Toast';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import useIsMobile from '../hooks/useIsMobile';
 const VERDICT_CONFIG = {
     shortlist: { bg: 'rgba(16,185,129,0.12)', color: '#34d399', border: 'rgba(16,185,129,0.25)', label: 'Shortlisted ✓', msg: 'Strong match — recruiter will likely review you.' },
     maybe: { bg: 'rgba(245,158,11,0.12)', color: '#fbbf24', border: 'rgba(245,158,11,0.25)', label: 'Under Review', msg: 'Partial match — consider tailoring your resume.' },
     reject: { bg: 'rgba(239,68,68,0.1)', color: '#f87171', border: 'rgba(239,68,68,0.2)', label: 'Low Match', msg: 'Weak match for this role. Try other positions.' },
 };
 const ApplyPage = () => {
+    const isMobile = useIsMobile();
     const { id: jobId } = useParams();
     const navigate = useNavigate();
     const { showToast } = useToast();
@@ -181,7 +183,7 @@ const ApplyPage = () => {
                     </div>
                     {/* Strengths + Weaknesses */}
                     {(result.aiStrengths?.length > 0 || result.aiWeaknesses?.length > 0) && (
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                             <div style={{ background: 'rgba(16,185,129,0.06)', border: '1px solid rgba(16,185,129,0.15)', borderRadius: '12px', padding: '1rem' }}>
                                 <p style={{ fontSize: '11px', fontWeight: 600, color: '#34d399', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: '8px' }}>✓ Strengths</p>
                                 {result.aiStrengths?.map((s, i) => (
@@ -201,7 +203,7 @@ const ApplyPage = () => {
                         </div>
                     )}
                     {/* Action buttons */}
-                    <div style={{ display: 'flex', gap: '10px' }}>
+                    <div style={{ display: 'flex', gap: '10px', flexDirection: isMobile ? 'column' : 'row' }}>
                         <button onClick={() => navigate('/dashboard')} style={{
                             flex: 1, background: 'var(--accent)', color: 'white', border: 'none',
                             borderRadius: '10px', padding: '12px', fontSize: '14px', fontWeight: 500,

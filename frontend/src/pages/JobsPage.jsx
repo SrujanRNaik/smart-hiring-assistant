@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import useIsMobile from '../hooks/useIsMobile';
 const JobsPage = () => {
+    const isMobile = useIsMobile();
     const { user } = useAuth();
     const navigate = useNavigate();
     const { showToast } = useToast();
@@ -52,7 +54,7 @@ const JobsPage = () => {
             <div style={{
                 background: 'radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.18) 0%, transparent 65%)',
                 borderBottom: '1px solid var(--border)',
-                padding: '4rem 1.5rem 3rem',
+                padding: isMobile ? '2.5rem 1rem 2rem' : '4rem 1.5rem 3rem',
                 textAlign: 'center',
             }}>
                 <div className="fade-up">
@@ -90,7 +92,7 @@ const JobsPage = () => {
             {/* ── Main content ── */}
             <div style={{ maxWidth: '900px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
                 {/* Stats row */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem', marginBottom: '2.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: '1rem', marginBottom: '2.5rem' }}>
                     {[
                         { label: 'Total Jobs', value: jobs.length, icon: '💼', color: '#6366f1' },
                         { label: 'Open Positions', value: jobs.filter(j => j.status === 'open').length, icon: '✅', color: '#10b981' },
@@ -144,7 +146,7 @@ const JobsPage = () => {
                                 transition: 'border-color .2s, transform .2s',
                             }}>
                                 {/* Card header */}
-                                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px', gap: '12px' }}>
+                                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'flex-start', justifyContent: 'space-between', marginBottom: '12px', gap: '12px' }}>
                                     <div style={{ flex: 1 }}>
                                         {/* Company avatar + title */}
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px' }}>

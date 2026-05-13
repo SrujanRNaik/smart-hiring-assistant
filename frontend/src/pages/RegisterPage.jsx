@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import useIsMobile from '../hooks/useIsMobile';
 const RegisterPage = () => {
+    const isMobile = useIsMobile();
     const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'candidate' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -46,7 +48,7 @@ const RegisterPage = () => {
         <div style={{
             minHeight: '100vh',
             background: 'radial-gradient(ellipse at 80% 50%, rgba(99,102,241,0.12) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(139,92,246,0.08) 0%, transparent 50%), var(--bg-primary)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '1.5rem' : '2rem',
         }}>
             <div className="fade-up" style={{ width: '100%', maxWidth: '440px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -59,7 +61,7 @@ const RegisterPage = () => {
                     <h1 className="font-display" style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>Create account</h1>
                     <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Join as a recruiter or candidate</p>
                 </div>
-                <div className="glass" style={{ borderRadius: '16px', padding: '2rem' }}>
+                <div className="glass" style={{ borderRadius: '16px', padding: isMobile ? '1.5rem' : '2rem' }}>
                     {error && (
                         <div style={{
                             background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
